@@ -5,65 +5,11 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>步行貓團隊：門禁系統</title>
   <style>
-    body {
-      font-family: Arial, sans-serif;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      height: 100vh;
-      margin: 0;
-    }
-
-    input {
-      margin-bottom: 10px;
-      padding: 10px;
-      font-size: 16px;
-    }
-
-    #outputText {
-      margin-bottom: 20px;
-      font-size: 18px;
-      font-weight: bold;
-    }
-
-    #adminPanel {
-      border: 1px solid #ccc;
-      padding: 20px;
-      max-width: 400px;
-      width: 100%;
-      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-      background-color: #f9f9f9;
-    }
-
-    #logList {
-      list-style-type: none;
-      padding: 0;
-    }
-
-    .logItem {
-      margin-bottom: 5px;
-    }
-
-    #clearButton {
-      padding: 10px;
-      background-color: #007bff;
-      color: #fff;
-      border: none;
-      cursor: pointer;
-    }
-
-    #clearButton:hover {
-      background-color: #0056b3;
-    }
-    .title {
-      color:fff
-    }
+    /* ... [原有的 CSS 樣式] ... */
   </style>
 </head>
 <body>
-<input type="button" value="管理介面" onclick="location.href='unlock-1.html'">
-<title></title>
+  <input type="button" value="管理介面" onclick="location.href='unlock-1.html'">
   <input type="text" id="textInput" placeholder="請感應磁扣">
   <div id="outputText"></div>
 
@@ -72,56 +18,40 @@
     <button id="clearButton">清除日誌</button>
     <ul id="logList"></ul>
   </div>
- 
+
   <script>
     document.getElementById('textInput').addEventListener('keydown', function (event) {
-      // 檢查是否按下Enter鍵（按鍵碼13代表Enter）
       if (event.key === 'Enter') {
-        // 取得文字框的值
         var inputText = this.value.trim().toLowerCase();
-       
+
         if (inputText === 'open') {
-          // 如果輸入文字是 'admin'，在新分頁中顯示 GitHub 頁面
           window.open('https://i-like-dev.github.io/wrong/open.html', '_blank');
           return;
         }
 
-        // 定義文字對應的語音
         var voiceMap = {
           '0001692131': '驗證成功，歡迎進入，您使用的方式為門禁卡，帳號為「步行貓」',
           '0011107948': '驗證成功，歡迎進入，您使用的方式為門禁卡，帳號為四樓通用',
           '2952721155': '訪客用卡申請與識別成功，請進入',
-          
         };
 
-        // 檢查輸入文字是否存在於語音映射中
         if (voiceMap.hasOwnProperty(inputText)) {
-          // 取得對應的語音
           var voiceText = voiceMap[inputText];
-
-          // 使用 Web Speech API 播放語音
           var synth = window.speechSynthesis;
           var utterance = new SpeechSynthesisUtterance(voiceText);
-         
-          // 顯示文字
           var outputText = document.getElementById('outputText');
           outputText.innerText = voiceText;
 
-          // 在語音結束後清空文字
           utterance.onend = function () {
             outputText.innerText = '';
           };
 
-          // 播放語音
           synth.speak(utterance);
-
-          // 更新管理後台
           updateAdminPanel(inputText);
         } else {
           alert('找不到該筆資料');
         }
 
-        // 清空文字框
         this.value = '';
       }
     });
@@ -132,13 +62,32 @@
       logItem.className = 'logItem';
       logItem.innerText = user + ' 在 ' + getCurrentTime() + ' 感應他的卡';
       logList.insertBefore(logItem, logList.firstChild);
+
+      saveLogToLocalStorage(logItem.innerText);
     }
 
     document.getElementById('clearButton').addEventListener('click', function () {
-      // 清空日誌列表
       var logList = document.getElementById('logList');
       logList.innerHTML = '';
+      localStorage.removeItem('logs');
     });
+
+    function saveLogToLocalStorage(log) {
+      var logs = localStorage.getItem('logs') ? JSON.parse(localStorage.getItem('logs')) : [];
+      logs.push(log);
+      localStorage.setItem('logs', JSON.stringify(logs));
+    }
+
+    function loadLogsFromLocalStorage() {
+      var logs = localStorage.getItem('logs') ? JSON.parse(localStorage.getItem('logs')) : [];
+      var logList = document.getElementById('logList');
+      logs.forEach(function(log) {
+        var logItem = document.createElement('li');
+        logItem.className = 'logItem';
+        logItem.innerText = log;
+        logList.appendChild(logItem);
+      });
+    }
 
     function getCurrentTime() {
       var now = new Date();
@@ -147,8 +96,11 @@
       var seconds = now.getSeconds();
       return hours + ':' + minutes + ':' + seconds;
     }
+
+    loadLogsFromLocalStorage();
   </script>
-<p>請刷卡後再進入！</p>
-<p>系統提醒您，等聽到「滴....」時，即可進入</p>
+
+  <p>請刷卡後再進入！</p>
+  <p>系統提醒您，等聽到「滴....」時，即可進入</p>
 </body>
 </html>
