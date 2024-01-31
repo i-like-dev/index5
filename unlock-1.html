@@ -85,6 +85,20 @@ onclick="pressKey('9')">9</button>
 </div>
 
 <script>
+  // 切換鍵盤顯示
+  function toggleKeypad() {
+    var keypad = document.getElementById('keypad');
+    var toggleButton = document.querySelector('.toggle');
+    if (keypad.style.display === "none" || keypad.style.display === '') {
+      keypad.style.display = "grid";
+      toggleButton.textContent = "隱藏鍵盤";
+    } else {
+      keypad.style.display = "none";
+      toggleButton.textContent = "顯示鍵盤";
+    }
+  }
+
+  // 處理數字鍵和功能鍵的輸入
   function pressKey(key) {
     var input = document.getElementById('keypadInput');
     input.value += key;
@@ -95,21 +109,24 @@ onclick="pressKey('9')">9</button>
     input.value = input.value.slice(0, -1);
   }
 
-      function submitKey() {
+  function submitKey() {
     var input = document.getElementById('keypadInput');
-    if(input.value === '0001692131') {
-      window.location.href = 'open.html'; // Redirect to index.html if correct code is entered
+    // 在這裡添加檢查代碼的邏輯
+    alert("輸入的代碼是: " + input.value);
+    // 比如，如果輸入正確，導航到 index.html
+    if (input.value === '0001692131') {
+      window.location.href = 'open.html';
     } else {
-      alert('錯誤!'); // Error handling for incorrect code
+      alert('卡號錯誤!');
     }
   }
 
-  function toggleKeypad() {
-    var keypad = document.getElementById('keypad');
-    keypad.classList.toggle('show');
-    var toggleButton = document.querySelector('.toggle-button');
-    toggleButton.textContent = keypad.classList.contains('show') ? '隱藏鍵盤' : '顯示鍵盤';
-  }
+  // 設置鍵盤事件，當按下 Enter 鍵時執行 submitKey 函數
+  document.getElementById('keypadInput').addEventListener('keypress', function(event) {
+    if (event.key === 'Enter') {
+      submitKey();
+    }
+  });
 </script>
 
 </body>
