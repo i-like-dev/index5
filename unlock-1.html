@@ -1,89 +1,115 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>請輸入正確密碼</title>
-    <style>
-        /* CSS 樣式 */
-        body {
-            font-family: Arial, sans-serif;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            background-color: #f0f0f0;
-        }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>管理介面</title>
+<style>
+  .keypad-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    background-color: #f0f0f0;
+  }
 
-        .input-container {
-            text-align: center;
-        }
+  .keypad {
+    display: none; /* 初始時不顯示 */
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+  }
 
-        input[type="text"] {
-            padding: 10px;
-            font-size: 16px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-        }
+  .keypad.show {
+    display: grid; /* 顯示時的樣式 */
+  }
 
-        .keyboard {
-            display: none;
-            margin-top: 20px;
-        }
+  .input-box {
+    margin-right: 20px;
+  }
 
-        .keyboard button {
-            padding: 10px 20px;
-            margin: 5px;
-            font-size: 16px;
-        }
-    </style>
+  .keypad button {
+    padding: 10px;
+    font-size: 20px;
+    border: 2px solid #ddd;
+    border-radius: 5px;
+    background-color: white;
+    cursor: pointer;
+  }
+
+  .keypad button:active {
+    background-color: #efefef;
+  }
+
+  .toggle-button {
+    padding: 10px 20px;
+    font-size: 16px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-bottom: 10px;
+  }
+</style>
 </head>
 <body>
 
-<div class="input-container">
-    <input type="text" id="codeInput" placeholder="請感應管理員卡...">
-    <button id="toggleKeyboard">顯示鍵盤</button>
-    <div class="keyboard" id="keyboard">
-        <button onclick="appendNumber('1')">1</button>
-        <button onclick="appendNumber('2')">2</button>
-        <button onclick="appendNumber('3')">3</button><br>
-        <button onclick="appendNumber('4')">4</button>
-        <button onclick="appendNumber('5')">5</button>
-        <button onclick="appendNumber('6')">6</button><br>
-        <button onclick="appendNumber('7')">7</button>
-        <button onclick="appendNumber('8')">8</button>
-        <button onclick="appendNumber('9')">9</button><br>
-        <button onclick="appendNumber('0')">0</button>
-        <button onclick="clearInput()">清除</button>
-    </div>
+<div class="keypad-container">
+  <div>
+    <input class="input-box" type="text" id="keypadInput" placeholder="感應管理員卡號...">
+    <button class="toggle-button" onclick="toggleKeypad()">顯示小鍵盤</button>
+  </div>
+
+  <div class="keypad" id="keypad">
+    <!-- Keypad buttons -->
+    <button onclick="pressKey('1')">1</button>
+    <button onclick="pressKey('2')">2</button>
+    <button
+onclick="pressKey('3')">3</button>
+    <button
+onclick="pressKey('4')">4</button>
+    <button
+onclick="pressKey('5')">5</button>
+    <button
+onclick="pressKey('6')">6</button>
+    <button
+onclick="pressKey('7')">7</button>
+    <button
+onclick="pressKey('8')">8</button>
+    <button
+onclick="pressKey('9')">9</button>
+    
+    <!-- ...其他按鈕... -->
+    <button onclick="pressKey('0')">0</button>
+    <button onclick="deleteKey()">刪除  </button>
+    <button onclick="submitKey()">送出</button>
+  </div>
 </div>
 
 <script>
-    // JavaScript 功能
-    document.getElementById('codeInput').addEventListener('keypress', function(event) {
-        if (event.key === 'Enter') {
-            validateCode(this.value);
-        }
-    });
+  function pressKey(key) {
+    var input = document.getElementById('keypadInput');
+    input.value += key;
+  }
 
-    document.getElementById('toggleKeyboard').addEventListener('click', function() {
-        var keyboard = document.getElementById('keyboard');
-        keyboard.style.display = keyboard.style.display === 'none' ? 'block' : 'none';
-    });
+  function deleteKey() {
+    var input = document.getElementById('keypadInput');
+    input.value = input.value.slice(0, -1);
+  }
 
-    function appendNumber(number) {
-        document.getElementById('codeInput').value += number;
+      function submitKey() {
+    var input = document.getElementById('keypadInput');
+    if(input.value === '0001692131') {
+      window.location.href = 'open.html'; // Redirect to index.html if correct code is entered
+    } else {
+      alert('錯誤!'); // Error handling for incorrect code
     }
+  }
 
-    function clearInput() {
-        document.getElementById('codeInput').value = '';
-    }
-
-    function validateCode(code) {
-        if (code === '0001692131') {
-            window.location.href = 'open.html';
-        } else {
-            alert('錯誤!');
-        }
-    }
+  function toggleKeypad() {
+    var keypad = document.getElementById('keypad');
+    keypad.classList.toggle('show');
+    var toggleButton = document.querySelector('.toggle-button');
+    toggleButton.textContent = keypad.classList.contains('show') ? '隱藏鍵盤' : '顯示鍵盤';
+  }
 </script>
 
 </body>
